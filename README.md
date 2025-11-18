@@ -7,11 +7,9 @@ Homebrew tap for CircleCI packages - see https://docs.brew.sh/How-to-Create-and-
 
 Or `brew tap circleci/tap` and then `brew install <formula>`.
 
-Or, in a `brew bundle` `Brewfile`:
-
-```ruby
-tap "circleci/tap"
-brew "<formula>"
+### circleci-testsuite
+```bash
+brew install circleci/tap/circleci-testsuite
 ```
 
 ## Documentation
