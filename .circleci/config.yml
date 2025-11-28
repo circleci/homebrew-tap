@@ -1,0 +1,60 @@
+version: 2.1
+
+parameters:
+  version:
+    type: string
+    default: ""
+  arm_sha256:
+    type: string
+    default: ""
+  intel_sha256:
+    type: string
+    default: ""
+
+jobs:
+  update_cask_version:
+    docker:
+      - image: cimg/go:1.25
+    steps:
+      - run:
+          name: Install GitHub CLI
+          command: |
+            sudo mkdir -p -m 755 /etc/apt/keyrings \
+            && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+            && cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+            && sudo chmod a+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+            && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+            && sudo apt update \
+            && sudo apt install gh -y
+      - checkout
+      - run:
+          name: Update testsuite cask
+          environment:
+            CIRCLECI_TESTSUITE_VERSION: << pipeline.parameters.version >>
+            CIRCLECI_TESTSUITE_ARM_SHA: << pipeline.parameters.arm_sha256 >>
+            CIRCLECI_TESTSUITE_INTEL_SHA: << pipeline.parameters.intel_sha256 >>
+          command: |
+            git config --global user.email "circleci-bot@circleci.com"
+            git config --global user.name "CircleCI Bot"
+
+            go run main.go
+
+            git checkout -b "bump-cask/${CIRCLECI_TESTSUITE_VERSION}"
+            git add Casks/circleci-testsuite.rb
+            git commit -m "Update circleci-testsuite plugin to ${CIRCLECI_TESTSUITE_VERSION}"
+
+            gh pr create \
+                  --title "Update circleci-testsuite cask to ${VERSION}" \
+                  --body "ARM checksum: ${ARM_SHA}\nIntel checksum: ${INTEL_SHA}" \
+                  --base=main \
+                  --dry-run
+
+
+workflows:
+  bump_cask_versions:
+    when: |
+      pipeline.parameters.version != ""
+      and pipeline.parameters.arm_sha256 != ""
+      and pipeline.parameters.intel_sha256 != ""
+    jobs:
+      - update_cask_version
