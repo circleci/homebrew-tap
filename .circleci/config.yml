@@ -1,0 +1,44 @@
+version: 2.1
+
+parameters:
+  version:
+    type: string
+    default: ""
+  arm_sha256:
+    type: string
+    default: ""
+  intel_sha256:
+    type: string
+    default: ""
+
+jobs:
+  update_cask_version:
+    docker:
+      - image: cimg/go:1.25
+    steps:
+      - checkout
+      - run:
+          name: Update testsuite cask
+          environment:
+            CIRCLECI_TESTSUITE_VERSION: << pipeline.parameters.version >>
+            CIRCLECI_TESTSUITE_ARM_SHA: << pipeline.parameters.arm_sha256 >>
+            CIRCLECI_TESTSUITE_INTEL_SHA: << pipeline.parameters.intel_sha256 >>
+          command: |
+            git config --global user.email "circleci-bot@circleci.com"
+            git config --global user.name "CircleCI Bot"
+
+            go run main.go
+
+            git checkout -b "bump-cask/${CIRCLECI_TESTSUITE_VERSION}"
+            git add Casks/circleci-testsuite.rb
+            git commit -m "Update circleci-testsuite plugin to ${CIRCLECI_TESTSUITE_VERSION}"
+            git push origin "bump-cask/${CIRCLECI_TESTSUITE_VERSION}"
+
+workflows:
+  bump_cask_versions:
+    when: |
+      pipeline.parameters.version != ""
+      and pipeline.parameters.arm_sha256 != ""
+      and pipeline.parameters.intel_sha256 != ""
+    jobs:
+      - update_cask_version
