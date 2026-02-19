@@ -14,7 +14,7 @@ parameters:
 jobs:
   update_cask_version:
     docker:
-      - image: cimg/go:1.25
+      - image: cimg/go:1.26
     steps:
       - checkout
       - run:
