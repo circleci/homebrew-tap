@@ -1,9 +1,9 @@
 cask "circleci-testsuite" do
   arch arm: "arm64", intel: "amd64"
 
-  version "1.0.25388-034ea10"
-  sha256 arm: "79f733bfbc726ef994c25b6ca9eb9314f07a7bb1a66d9da370f83a1d5540f799",
-         intel: "086f2cf97ed5a55244777c76f972c6fb2d2a262a37dda7f568c553426c85427b"
+  version "1.0.25633-a137ef1"
+  sha256 arm: "6f9d4dc6d9a88375a9759622d7ab7ee9c9bbad76ae266a201c7729f46730ddb4",
+         intel: "ef6fd5721cb15826c4ac0dc7bd12846a479304388e50006f17076519a7cb13ec"
 
   url "https://circleci-binary-releases.s3.amazonaws.com/circleci-cli-plugins/circleci-testsuite/#{version}/darwin/#{arch}/circleci-testsuite.gz"
   name "CircleCI TestSuite Plugin"
