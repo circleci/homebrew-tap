@@ -1,4 +1,6 @@
 cask "circleci-testsuite" do
+  disable! date: "2026-07-25", because: "is replaced by native extension management in the CircleCI CLI", replacement_cask: "circleci-public/circleci/circleci@next"
+
   arch arm: "arm64", intel: "amd64"
 
   version "1.0.45841-398bd7f"

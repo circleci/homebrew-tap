@@ -8,9 +8,7 @@ Homebrew tap for CircleCI packages - see https://docs.brew.sh/How-to-Create-and-
 Or `brew tap circleci/tap` and then `brew install <formula>`.
 
 ### circleci-testsuite
-```bash
-brew install circleci/tap/circleci-testsuite
-```
+NOTE: This cask has been disabled. To use this CircleCI CLI extension install the [CircleCI CLI](https://cli.circleci.com/) and run `circleci extension install testsuite`.
 
 ## Documentation
 
